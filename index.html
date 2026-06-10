@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 46 Practice Quiz 3</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }
+
+        [data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }
+
+        [data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }
+
+        [data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }
+
+        [data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 46 Practice Quiz 3</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+                
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData = [
+            // --- Section 1: Parathyroid Pathology ---
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperparathyroidism and hypoparathyroidism regarding etiology, clinical manifestations, morphologic features, and biochemical features.",
+                question: "A 55-year-old woman presents to her primary care physician with complaints of generalized fatigue, weakness, and mild depression over the past several months. She also reports a recent episode of severe flank pain that was diagnosed as a kidney stone (nephrolithiasis). Laboratory testing reveals an elevated serum calcium level. Which of the following is the most likely diagnosis?",
+                options: {
+                    A: "Adrenal insufficiency",
+                    B: "Congenital adrenal hyperplasia",
+                    C: "Hyperparathyroidism",
+                    D: "Hypoparathyroidism",
+                    E: "Medullary thyroid carcinoma"
+                },
+                correctAnswer: "C",
+                rationale: "The patient’s clinical presentation of fatigue, weakness, mild depression, nephrolithiasis, and elevated serum calcium is classic for hyperparathyroidism. Modern presentations often feature these vague symptoms, whereas classic signs also included osteitis fibrosa cystica and peptic ulcers.",
+                source: "Parathyroid Pathology PDF, slides 7 & 8: 'Hyperparathyroidism Typical Modern Signs & Symptoms • Vague symptoms • Fatigue & weakness • Mild depression' and 'Classic Signs & Symptoms • Nephrolithiasis'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperparathyroidism and hypoparathyroidism regarding etiology, clinical manifestations, morphologic features, and biochemical features.",
+                question: "A 58-year-old woman is evaluated for osteoporosis and recurrent peptic ulcers. Her physician suspects primary hyperparathyroidism. If this diagnosis is correct, laboratory evaluation is most likely to reveal an elevated serum intact parathyroid hormone (PTH) level alongside which of the following serum chemistry profiles?",
+                options: {
+                    A: "Decreased calcium and decreased phosphate",
+                    B: "Decreased calcium and increased phosphate",
+                    C: "Increased calcium and decreased phosphate",
+                    D: "Increased calcium and increased phosphate",
+                    E: "Normal calcium and normal phosphate"
+                },
+                correctAnswer: "C",
+                rationale: "Primary hyperparathyroidism (1° Hyper-PTH) biochemically shows an elevated PTH level, an elevated calcium (Ca++) level, and a decreased phosphate (PO4-) level. Hypoparathyroidism, conversely, shows low Ca++ and high PO4-.",
+                source: "Parathyroid Pathology PDF, slide 15: '1° Hyper-PTH | PTH [Up arrow] | Ca++ [Up arrow] | PO4- [Down arrow]'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperparathyroidism and hypoparathyroidism regarding etiology, clinical manifestations, morphologic features, and biochemical features.",
+                question: "A 42-year-old man undergoes a total thyroidectomy for a large multinodular goiter. Two days after surgery, he develops tingling around his lips and spasms in his hands (increased neuromuscular excitability). Laboratory tests show a decreased serum calcium level and an elevated serum phosphate level. The patient's current condition is most likely caused by which of the following?",
+                options: {
+                    A: "Autoimmune destruction of the adrenal cortex",
+                    B: "Inadvertent surgical excision of the parathyroid glands",
+                    C: "Paraneoplastic syndrome",
+                    D: "Pituitary adenoma",
+                    E: "Renal failure"
+                },
+                correctAnswer: "B",
+                rationale: "The patient is presenting with hypoparathyroidism, indicated by increased neuromuscular excitability, low serum calcium, and high serum phosphate following neck surgery. Surgical excision is a primary etiology of hypoparathyroidism.",
+                source: "Parathyroid Pathology PDF, slide 18: 'Hypoparathyroidism Causes • Surgical excision... Biochemical PTH [Down arrow] Ca++ [Down arrow] PO4- [Up arrow] Clinical features • Increased neuromuscular excitability'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO2: Compare and contrast primary, secondary and tertiary hyperparathyroidism regarding etiology, clinical manifestations, morphologic features, and biochemical features.",
+                question: "A 60-year-old man with chronic renal disease develops severe bone demineralization and osteoclastic bone resorption (renal osteodystrophy). His physician explains that his diseased kidneys are failing to excrete phosphate, leading to hyperphosphatemia. This hyperphosphatemia suppresses the renal hydroxylation of an inactive precursor into which of the following active molecules, thereby driving his secondary hyperparathyroidism?",
+                options: {
+                    A: "1,25-(OH)2D",
+                    B: "25-hydroxyvitamin D",
+                    C: "Calcitonin",
+                    D: "Parathyroid hormone-related protein (PTH-rP)",
+                    E: "RANK ligand"
+                },
+                correctAnswer: "A",
+                rationale: "In chronic renal disease, decreased phosphate excretion leads to hyperphosphatemia. High PO4 suppresses the renal hydroxylation of inactive vitamin D to active 1,25-(OH)2D. The resulting low 1,25-(OH)2D and low calcium absorption stimulate the parathyroid glands, causing secondary hyperparathyroidism.",
+                source: "Parathyroid Pathology PDF, slide 12: 'Renal Osteodystrophy | Chronic Renal Disease... ↑ PO4 suppresses renal hydroxylation of inactive vitamin D to active 1,25-(OH)2D'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO2: Compare and contrast primary, secondary and tertiary hyperparathyroidism regarding etiology, clinical manifestations, morphologic features, and biochemical features.",
+                question: "A 60-year-old man with a long-standing history of chronic renal insufficiency is evaluated for bone pain. Laboratory results reveal an elevated parathyroid hormone (PTH) level, a low-to-normal serum calcium level, and an elevated serum phosphate level. A biopsy of his parathyroid glands would most likely show which of the following?",
+                options: {
+                    A: "A single parathyroid adenoma",
+                    B: "Bilateral cortical nodular disease",
+                    C: "Parathyroid carcinoma",
+                    D: "Parathyroid hyperplasia",
+                    E: "Primary bilateral macronodular disease"
+                },
+                correctAnswer: "D",
+                rationale: "This patient has secondary hyperparathyroidism, which is most commonly caused by chronic renal insufficiency or Vitamin D deficiency. It presents with elevated PTH, low/normal calcium, and elevated phosphate. The most common underlying parathyroid pathology in secondary hyperparathyroidism is parathyroid hyperplasia.",
+                source: "Parathyroid Pathology PDF, slides 10 & 11: 'Secondary • Parathyroid hyperplasia • Chronic renal insufficiency • Vitamin D deficiency... Most Common Pathology of 2° Hyperparathyroidism [Image showing Hyperplasia]'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO2: Compare and contrast primary, secondary and tertiary hyperparathyroidism regarding etiology, clinical manifestations, morphologic features, and biochemical features.",
+                question: "A 55-year-old woman with a history of chronic renal disease and secondary hyperparathyroidism presents with new-onset, persistent hypercalcemia. Her physician explains that her hyperplastic parathyroid glands have now acquired autonomous function. According to modern pathology definitions, this condition is now regarded as a neoplastic transformation. Which of the following is the most accurate diagnosis for her current state?",
+                options: {
+                    A: "Primary hyperparathyroidism",
+                    B: "Pseudohypoparathyroidism",
+                    C: "Quaternary hyperparathyroidism",
+                    D: "Secondary hyperparathyroidism",
+                    E: "Tertiary hyperparathyroidism"
+                },
+                correctAnswer: "E",
+                rationale: "Tertiary hyperparathyroidism develops in some cases of secondary hyperparathyroidism (typically associated with chronic renal disease) when the hyperplastic glands acquire autonomous function, resulting in persistent hyperparathyroidism and hypercalcemia. It is now regarded as a neoplastic transformation of secondary hyperplasia.",
+                source: "Parathyroid Pathology PDF, slide 14: 'Tertiary Hyperparathyroidism • May develop in some cases of 2° hyper-PTH • Typically associated with chronic renal disease • Hyperplastic glands acquire autonomous function • Now regarded as transformation from 2° hyperplasia to neoplasia • Results in persistent hyperparathyroidism and hypercalcemia'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO3: Differentiate parathyroid hyperplasia from parathyroid adenoma and carcinoma.",
+                question: "A 45-year-old woman with end-stage renal disease undergoes surgery for severe, refractory secondary hyperparathyroidism. The surgeon evaluates all four parathyroid glands and notes that they are all symmetrically enlarged. Under the 2022 WHO classification, the diagnosis of parathyroid hyperplasia is formally defined by which of the following criteria?",
+                options: {
+                    A: "An absolute increase in parenchymal cells in multiple glands",
+                    B: "An isolated proliferation of chief cells in a single gland",
+                    C: "Extensive capsular and vascular invasion by parenchymal cells",
+                    D: "The presence of frequent atypical mitotic figures",
+                    E: "The replacement of glandular parenchyma with stromal adipose tissue"
+                },
+                correctAnswer: "A",
+                rationale: "Parathyroid hyperplasia is defined as an absolute increase in parathyroid parenchymal cells in multiple glands. Secondary hyperplasia (often due to renal disease) is now regarded as the only true form of parathyroid hyperplasia. Adenomas typically involve a single gland, while invasion defines carcinoma.",
+                source: "Parathyroid Pathology PDF, slide 22: 'Parathyroid Hyperplasia • Definition: an absolute increase in parathyroid parenchymal cells in multiple glands'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO3: Differentiate parathyroid hyperplasia from parathyroid adenoma and carcinoma.",
+                question: "A 50-year-old woman undergoes excision of an enlarged parathyroid gland for primary hyperparathyroidism. Histological examination of the 1.5-gram encapsulated mass reveals a hypercellular proliferation of chief cells without appreciable stromal adipose tissue. Additionally, a distinct rim of compressed, non-neoplastic parathyroid tissue is visible at the edge of the mass. Which of the following is the most likely diagnosis?",
+                options: {
+                    A: "Atypical parathyroid tumor",
+                    B: "Lipoadenoma",
+                    C: "Parathyroid adenoma",
+                    D: "Parathyroid carcinoma",
+                    E: "Parathyroid hyperplasia"
+                },
+                correctAnswer: "C",
+                rationale: "A parathyroid adenoma is a benign neoplasm characterized histologically by hypercellularity with no appreciable stromal adipose tissue, and it often features a rim of non-neoplastic parathyroid tissue. The other glands are typically normal or atrophic.",
+                source: "Parathyroid Pathology PDF, slide 26: 'Parathyroid Adenoma • Hypercellular with no appreciable stromal adipose tissue • May find rim of non-neoplastic parathyroid tissue'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO3: Differentiate parathyroid hyperplasia from parathyroid adenoma and carcinoma.",
+                question: "A 65-year-old man presents with severe primary hyperparathyroidism. A parathyroid mass is excised, and the pathologist notes frequent mitotic activity, fibrous bands, and pleomorphism. To definitively diagnose this mass as a parathyroid carcinoma rather than an adenoma, the pathologist must identify which of the following features?",
+                options: {
+                    A: "DNA aneuploidy",
+                    B: "High cell density",
+                    C: "Invasion into adjacent soft tissues or vascular structures",
+                    D: "Lack of stromal adipose tissue",
+                    E: "Presence of oncocytes"
+                },
+                correctAnswer: "C",
+                rationale: "In parathyroid tumors, mitotic activity, pleomorphism, and fibrous bands are suggestive but not definitive for malignancy. The definitive features required to diagnose a parathyroid carcinoma are invasion (into adjacent soft tissues, thyroid, vascular, or perineural invasion) and/or metastasis.",
+                source: "Parathyroid Pathology PDF, slide 31: 'Parathyroid Carcinoma Definitive Features • Invasion • Into adjacent soft tissues or thyroid • Vascular • Perineural • Metastasis'"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO4: Identify the relationship between parathyroid neoplasia and multiple endocrine neoplasia (MEN) syndromes.",
+                question: "A 35-year-old man with a history of recurrent peptic ulcer disease and a pituitary prolactinoma presents with symptomatic hypercalcemia. He is diagnosed with primary hyperparathyroidism. His constellation of neuroendocrine tumors strongly suggests Multiple Endocrine Neoplasia type 1 (MEN1). Which of the following correctly describes the nature of the parathyroid pathology in patients with this specific genetic syndrome?",
+                options: {
+                    A: "A single, sporadic parathyroid adenoma",
+                    B: "Autoimmune destruction of the parathyroid glands",
+                    C: "Multiglandular microadenomas",
+                    D: "Parathyroid carcinoma driven by CDC73 mutations",
+                    E: "Secondary parathyroid hyperplasia due to renal failure"
+                },
+                correctAnswer: "C",
+                rationale: "Patients with MEN1 syndrome characteristically develop parathyroid pathology (along with Pituitary and Pancreatic tumors). The parathyroid involvement in MEN is historically referred to as \"primary hyperplasia,\" but new definitions recognize this as multiple adenomas (multiglandular microadenomas).",
+                source: "Parathyroid Pathology PDF, slide 23: 'Parathyroid Hyperplasia – New Definitions... “Primary hyperplasia” associated with MEN now recognized as multiple adenomas.' and 'MEN1 • 3 Ps (and others) • Parathyroid multiglandular microadenomas' (Multiple Endocrine Neoplasias PDF, slide 37)"
+            },
+            {
+                section: "Parathyroid Pathology",
+                fullLO: "LO4: Identify the relationship between parathyroid neoplasia and multiple endocrine neoplasia (MEN) syndromes.",
+                question: "A 28-year-old woman is diagnosed with familial parathyroid adenomas. Genetic testing is ordered to determine the underlying hereditary syndrome. A mutation in the MEN1 gene on chromosome 11q13 is identified. This gene normally produces a protein called menin, which functions in which of the following cellular processes?",
+                options: {
+                    A: "Autonomic nerve conduction",
+                    B: "Epigenetic regulation and interaction with cellular proteins",
+                    C: "Ion channel transport (KCNJ5)",
+                    D: "Receptor tyrosine kinase signaling",
+                    E: "Steroid hormone synthesis"
+                },
+                correctAnswer: "B",
+                rationale: "The MEN1 gene at 11q13 produces a gene product called menin. Its exact role in tumorigenesis is unclear, but it interacts with many cellular proteins and is involved in epigenetic regulation.",
+                source: "Multiple Endocrine Neoplasias PDF, slide 37: 'Germline mutation • MEN1 at 11q13 • Exact role of gene product (menin) in tumorigenesis is unclear as it interacts with many cellular proteins and is involved in epigenetic regulation'"
+            },
+
+            // --- Section 2: Adrenal Disorders and Multiple Endocrine Neoplasia ---
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO1: Recognize how to use endocrine tests to diagnose adrenal disorders.",
+                question: "A 45-year-old woman presents with recent weight gain, central obesity, and wide, red abdominal striae. Her physician suspects hypercortisolism (Cushing's syndrome). As an initial screening test, the physician administers 1-mg of dexamethasone at 11:00 PM and measures her serum cortisol at 8:00 AM the next morning. In a patient with Cushing's syndrome, this test will demonstrate which of the following results?",
+                options: {
+                    A: "A paradoxical increase in serum ACTH",
+                    B: "Complete suppression of morning cortisol to < 1.8 ug/dL",
+                    C: "Non-suppressed morning cortisol",
+                    D: "Suppression of cortisol strictly by 50%",
+                    E: "Undetectable morning cortisol"
+                },
+                correctAnswer: "C",
+                rationale: "The basic premise of the overnight 1-mg dexamethasone suppression test is that in all causes of Cushing's syndrome, there is decreased or absent negative feedback by glucocorticoids. Therefore, a patient with Cushing's will have a non-suppressed morning cortisol after the dose, whereas a normal patient would suppress to < 1.8 ug/dL.",
+                source: "Adrenal Disorders PDF, slide 14: 'With Cushing’s Syndrome there will be a non- suppressed morning cortisol after a dose of a potent glucocorticoid (Dexamethasone)'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO1: Recognize how to use endocrine tests to diagnose adrenal disorders.",
+                question: "A patient is confirmed to have ACTH-dependent Cushing's syndrome. To differentiate between a pituitary adenoma (Cushing's disease) and an ectopic ACTH-producing tumor, the physician orders a high-dose dexamethasone suppression test (2.0-mg orally every 6 hours for 2 days). If the patient has an ACTH-secreting pituitary adenoma, what is the expected response to this high-dose test?",
+                options: {
+                    A: "~50% reduction in morning cortisol",
+                    B: "Complete suppression of cortisol to < 1.8 ug/dL",
+                    C: "Elevation of cortisol by 50%",
+                    D: "No change in morning cortisol",
+                    E: "Paradoxical elevation of ACTH"
+                },
+                correctAnswer: "A",
+                rationale: "Sorting out ectopic from pituitary Cushing's utilizes the high-dose dexamethasone suppression test. A pituitary adenoma typically retains some sensitivity to negative feedback at very high doses, resulting in an approximately 50% reduction in AM cortisol. Ectopic tumors typically show no suppression.",
+                source: "Adrenal Disorders PDF, slide 18: 'Sorting out ectopic from pituitary Cushing’s can be quite difficult High dose dexamethasone suppression 2.0-mg po q 6 hours for 2 days beginning at 8:00 AM Usually will get ~50% reduction AM cortisol with an ACTH secreting pituitary adenoma.'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO1: Recognize how to use endocrine tests to diagnose adrenal disorders.",
+                question: "A 40-year-old man is evaluated for fatigue, weight loss, and hypotension. The physician suspects adrenal insufficiency and orders a Cosyntropin (ACTH stimulation) test to differentiate between primary and secondary causes. A \"flat\" (non-responsive) cortisol curve following ACTH administration is most indicative of which of the following?",
+                options: {
+                    A: "An intact adrenal cortex with hypothalamic failure",
+                    B: "Primary adrenal insufficiency",
+                    C: "Pituitary microadenoma",
+                    D: "Secondary adrenal insufficiency",
+                    E: "Tertiary adrenal insufficiency"
+                },
+                correctAnswer: "B",
+                rationale: "The Cosyntropin (ACTH stimulation) test is used to evaluate adrenal reserve. A flat response indicates that the adrenal cortex is destroyed or dysfunctional and cannot respond to ACTH, which is diagnostic of primary adrenal insufficiency. A diminished (but not completely flat) response is more typical of secondary insufficiency.",
+                source: "Adrenal Disorders PDF, slide 30: 'Sorting out Primary from Secondary Adrenal Insufficiency... Cosyntropin testing (ACTH stimulation testing) Flat response = primary'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO2: Recognize the different causes of Cushing’s Syndrome.",
+                question: "A 50-year-old woman is evaluated for central adiposity, a \"buffalo hump,\" and proximal muscle weakness. Laboratory testing reveals elevated serum cortisol and elevated ACTH. A high-dose dexamethasone suppression test results in a 50% reduction in her morning cortisol levels. Which of the following is the most likely specific cause of her Cushing's syndrome?",
+                options: {
+                    A: "Adrenal cortical adenoma",
+                    B: "Adrenal cortical carcinoma",
+                    C: "Ectopic ACTH from a carcinoid tumor",
+                    D: "Ectopic ACTH from a small cell lung cancer",
+                    E: "Pituitary adenoma (Cushing's Disease)"
+                },
+                correctAnswer: "E",
+                rationale: "Cushing's syndrome caused specifically by a pituitary adenoma secreting ACTH is termed \"Cushing's Disease.\" It is characterized by high cortisol, high ACTH, and suppression with high-dose dexamethasone.",
+                source: "Adrenal Disorders PDF, slide 6: 'Causes • Pituitary = Cushing’s Disease' and 'ACTH dependent (high cortisol and ACTH) Pituitary source: pituitary adenoma' (Adrenal Disorders PDF, slide 17)"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO2: Recognize the different causes of Cushing’s Syndrome.",
+                question: "A 65-year-old man with a long-standing history of smoking presents with severe proximal muscle weakness, easy bruising, and new-onset hypertension. Laboratory studies show markedly elevated serum cortisol and elevated plasma ACTH. However, his cortisol levels do not suppress during a high-dose dexamethasone suppression test. Which of the following is the most likely source of his ACTH production?",
+                options: {
+                    A: "Adrenal adenoma",
+                    B: "Hypothalamic tumor",
+                    C: "Pituitary microadenoma",
+                    D: "Small cell lung cancer",
+                    E: "Thyroid medullary carcinoma"
+                },
+                correctAnswer: "D",
+                rationale: "The patient has ACTH-dependent Cushing's syndrome that does not suppress with high-dose dexamethasone, indicating an ectopic ACTH source. Small cell lung cancer is a classic cause of ectopic ACTH production.",
+                source: "Adrenal Disorders PDF, slide 17: 'Ectopic source: neoplasm releasing ACTH Small cell lung cancer Carcinoid syndrome – lung and gut sites Islet cell tumors of the pancreas Pheochromocytomas'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO2: Recognize the different causes of Cushing’s Syndrome.",
+                question: "A 35-year-old man presents with signs of hypercortisolism. Evaluation confirms an ACTH-dependent Cushing's syndrome caused by a pituitary adenoma. He also has a history of hypercalcemia and refractory peptic ulcer disease. His physician suspects a familial syndrome. Which of the following genetic syndromes is most likely responsible for his ACTH-secreting pituitary tumor (most commonly a prolactinoma, but may also be ACTH-secreting)?",
+                options: {
+                    A: "Multiple Endocrine Neoplasia Type I (MEN1)",
+                    B: "Multiple Endocrine Neoplasia Type IIA (MEN2A)",
+                    C: "Multiple Endocrine Neoplasia Type IIB (MEN2B)",
+                    D: "Polyglandular Autoimmune Syndrome Type I",
+                    E: "Polyglandular Autoimmune Syndrome Type II"
+                },
+                correctAnswer: "A",
+                rationale: "MEN Type I is characterized by Parathyroid hyperplasia (hypercalcemia), Pancreatic islet cell tumors (e.g., gastrinoma causing peptic ulcers), and Pituitary tumors. While prolactinomas are the most common pituitary tumor in MEN1, ACTH-secreting tumors (causing Cushing's) also occur.",
+                source: "Multiple Endocrine Neoplasias PDF, slide 10: 'MEN Type I... Pituitary Tumor: Most commonly this is a prolactinoma but other types have been described eg. Non-secreting tumors, growth hormone secreting tumors and ACTH secreting tumors'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO3: Recognize the different causes of adrenal insufficiency.",
+                question: "A 38-year-old man presents with a several-month history of profound fatigue, anorexia, and postural dizziness. Physical examination reveals noticeable hyperpigmentation of his skin. Laboratory evaluation demonstrates hyponatremia and hyperkalemia. He is diagnosed with primary adrenal insufficiency (Addison's disease). Based on the statistical prevalence of the diseases that cause destruction or metabolic inhibition of the adrenal gland, which of the following is the most likely underlying etiology in this patient?",
+                options: {
+                    A: "Amyloidosis",
+                    B: "Autoimmune adrenalitis",
+                    C: "Fungal infection (e.g., histoplasmosis)",
+                    D: "Hemochromatosis",
+                    E: "Tuberculosis"
+                },
+                correctAnswer: "B",
+                rationale: "Primary adrenal insufficiency (Addison's disease) is caused by the destruction or metabolic inhibition of adrenal gland activity. The most common cause of this destruction is autoimmune adrenalitis, which accounts for 80% of cases. Tuberculosis is the second most common cause (19%), while miscellaneous causes such as fungal infections, amyloidosis, and hemochromatosis account for the remaining 1%.",
+                source: "Adrenal Disorders PDF, slide 21: 'Addison’s Disease – destruction or metabolic inhibition of adrenal gland activity. 1. Autoimmune adrenalitis (80%) 2. Tuberculosis (19%) 3. Miscellaneous (1%)... Fungal Infection... Amyloidosis Hemochromatosis'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO3: Recognize the different causes of adrenal insufficiency.",
+                question: "A 35-year-old woman is being evaluated for chronic weakness, fatigue, and recurrent nausea. Physical examination reveals noticeable hyperpigmentation of her oral mucosa and palmar creases. Laboratory evaluation shows hyponatremia, hyperkalemia, and a low serum cortisol level. Based on clinical clues, which of the following best describes her disease process?",
+                options: {
+                    A: "Primary adrenal insufficiency (Addison's disease)",
+                    B: "Secondary adrenal insufficiency due to long-term corticosteroid withdrawal",
+                    C: "Secondary adrenal insufficiency due to pituitary adenoma",
+                    D: "Tertiary adrenal insufficiency due to hypothalamic lesion",
+                    E: "Waterhouse-Friderichsen Syndrome"
+                },
+                correctAnswer: "A",
+                rationale: "The presence of hyperpigmentation and hyperkalemia are key clinical and laboratory clues that differentiate primary adrenal insufficiency (Addison's disease) from secondary adrenal insufficiency. Secondary insufficiency typically lacks hyperkalemia (because aldosterone is preserved) and lacks hyperpigmentation (because ACTH is low, not high).",
+                source: "Adrenal Disorders PDF, slide 30: 'Sorting out Primary from Secondary Adrenal Insufficiency Clinical Clues... Pigmentation (= primary) Hyperkalemia (= primary)'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO3: Recognize the different causes of adrenal insufficiency.",
+                question: "A 12-year-old girl is evaluated for new-onset hyperpigmentation, fatigue, and orthostatic hypotension, which is diagnosed as primary adrenal insufficiency (Addison's disease). Her medical history is significant for chronic mucocutaneous candidiasis since early childhood and recent episodes of severe hypocalcemia due to hypoparathyroidism. Which of the following syndromes best accounts for this patient's constellation of endocrine and non-endocrine findings?",
+                options: {
+                    A: "Multiple Endocrine Neoplasia Type I (MEN1)",
+                    B: "Multiple Endocrine Neoplasia Type IIA (MEN2A)",
+                    C: "Polyglandular Autoimmune Syndrome Type I (PGAS I)",
+                    D: "Polyglandular Autoimmune Syndrome Type II (PGAS II)",
+                    E: "Polyglandular Autoimmune Syndrome Type III (PGAS III)"
+                },
+                correctAnswer: "C",
+                rationale: "PGAS Type I typically presents first in childhood with chronic mucocutaneous candidiasis, followed by hypoparathyroidism, and finally adrenal insufficiency (Addison's disease).",
+                source: "Multiple Endocrine Neoplasias PDF, slide 3: 'Polyglandular Autoimmune Syndromes (PGAS) Type I • Consists primarily of: chronic mucocutaneous candidiasis hypoparathyroidism adrenal insufficiency (Addison’s Disease)'"
+            },
+            {
+                section: "Adrenal Disorders and Multiple Endocrine Neoplasia",
+                fullLO: "LO3: Recognize the different causes of adrenal insufficiency.",
+                question: "A 35-year-old woman with a history of type 1 diabetes mellitus presents with weight loss, fatigue, and hyperkalemia. She is diagnosed with autoimmune adrenalitis (Addison's disease). Her physician screens her for autoimmune thyroid disease, suspecting a specific polyglandular syndrome. Which of the following syndromes is characterized by the combination of Addison's disease, type 1 diabetes, and autoimmune thyroid disease in an adult female?",
+                options: {
+                    A: "Multiple Endocrine Neoplasia Type I",
+                    B: "Polyglandular Autoimmune Syndrome Type I",
+                    C: "Polyglandular Autoimmune Syndrome Type II",
+                    D: "Polyglandular Autoimmune Syndrome Type III",
+                    E: "Waterhouse-Friderichsen Syndrome"
+                },
+                correctAnswer: "C",
+                rationale: "PGAS Type II occurs primarily in adulthood (average onset ~30 years) and is characterized by the presence of Addison's disease combined with autoimmune thyroid disease and/or Type 1 diabetes and gonadal failure. (PGAS III involves thyroid disease and other autoimmune disorders, but not adrenal insufficiency).",
+                source: "Multiple Endocrine Neoplasias PDF, slide 4: 'Polyglandular Autoimmune Syndromes (PGAS) Type II • Consists primarily of: adrenal insufficiency (Addison’s Disease) autoimmune thyroid disease and/or Type 1 diabetes'"
+            },
+
+            // --- Section 3: Adrenal Pathology ---
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO1: Compare and contrast adrenal cortical hyperfunction and hypofunction regarding etiology, basic clinical features and associated pathologic changes.",
+                question: "A 45-year-old woman is diagnosed with Cushing syndrome. Imaging studies and biochemical tests confirm that the source of her hypercortisolism is an autonomous adrenal cortical adenoma in her left adrenal gland. Due to the negative feedback loop suppressing ACTH, surgical exploration of her right adrenal gland would most likely reveal which of the following pathologic changes?",
+                options: {
+                    A: "Bilateral cortical macronodular enlargement",
+                    B: "Contralateral cortical atrophy",
+                    C: "Diffuse cortical hyperplasia",
+                    D: "Hemorrhagic necrosis",
+                    E: "Medullary hyperplasia"
+                },
+                correctAnswer: "B",
+                rationale: "In Cushing syndrome caused by a primary adrenal cortical neoplasm (adenoma or carcinoma), the autonomous production of cortisol suppresses pituitary ACTH. The lack of ACTH trophic stimulation leads to atrophy of the contralateral (and adjacent non-neoplastic) adrenal cortex. Pituitary or ectopic ACTH excess causes bilateral cortical hyperplasia.",
+                source: "Adrenal Pathology PDF, slide 9: 'Cushing Syndrome Etiologic Differentiation... Adrenal Cortical Neoplasm | Plasma ACTH: [Down arrow] | Adrenal Pathology: Contralateral cortical atrophy'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO1: Compare and contrast adrenal cortical hyperfunction and hypofunction regarding etiology, basic clinical features and associated pathologic changes.",
+                question: "A male infant is evaluated for severe salt wasting, poor feeding, and weight loss shortly after birth. He is diagnosed with Congenital Adrenal Hyperplasia (CAH) due to a 21-hydroxylase (CYP21A2) deficiency. This enzymatic block causes a severe drop in cortisol and aldosterone levels. In response to the loss of cortisol negative feedback, the pituitary increases secretion of a hormone that directly drives which of the following gross pathologic changes in the infant's adrenal glands?",
+                options: {
+                    A: "Adrenal medullary hyperplasia",
+                    B: "Bilateral cortical atrophy",
+                    C: "Bilateral cortical hyperplasia",
+                    D: "Hemorrhagic infarction",
+                    E: "Unilateral adenoma formation"
+                },
+                correctAnswer: "C",
+                rationale: "The drop in cortisol removes negative feedback on the pituitary, resulting in a massive increase in ACTH secretion. This chronic elevated ACTH continuously stimulates the adrenal cortex, resulting in bilateral cortical hyperplasia.",
+                source: "Adrenal Pathology PDF, slide 19: 'Congenital Adrenal Hyperplasia... Adrenal Steroidogenic Enzyme Deficiency -> [Decreased] Cortisol, [Decreased] Aldosterone -> [Increased] ACTH -> Bilateral Cortical Hyperplasia'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO1: Compare and contrast adrenal cortical hyperfunction and hypofunction regarding etiology, basic clinical features and associated pathologic changes.",
+                question: "A 50-year-old man presents with persistent hypertension, muscle weakness, and paresthesias. Laboratory evaluation reveals hypokalemia and a profoundly low serum renin level. His serum sodium is strictly within normal limits. An abdominal CT scan shows bilateral nodular enlargement of the adrenal glands. Which of the following is the most likely diagnosis?",
+                options: {
+                    A: "Addison's disease",
+                    B: "Congenital adrenal hyperplasia",
+                    C: "Cushing's disease",
+                    D: "Pheochromocytoma",
+                    E: "Primary Aldosterone Excess (Idiopathic bilateral hyperplasia)"
+                },
+                correctAnswer: "E",
+                rationale: "The patient has primary aldosteronism characterized by hypertension, weakness, hypokalemia, and low serum renin. The most common cause (60-70%) is idiopathic bilateral nodular adrenal cortical disease (diffuse hyperplasia).",
+                source: "Adrenal Pathology PDF, slides 12 & 15: 'Primary Aldosterone Excess • Clinical Features • Hypertension • Weakness and paresthesia • Causes • Idiopathic Bilateral nodular adrenal cortical disease or diffuse hyperplasia (60-70%)' and 'Low serum renin'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO2: Compare and contrast adrenal cortical adenoma and carcinoma regarding pathologic features, hormonal activity, driver mutations, and prognosis.",
+                question: "A 40-year-old woman is diagnosed with an aldosterone-producing adrenal adenoma (Conn syndrome). The excised tumor is analyzed for genetic alterations. According to recent molecular pathology data, which of the following driver mutations is the most frequent overall cause of this specific type of benign neoplasm?",
+                options: {
+                    A: "CTNNB1 (WNT/beta catenin pathway)",
+                    B: "KCNJ5 (sodium channel)",
+                    C: "PRKACA (Protein kinase A)",
+                    D: "RET proto-oncogene",
+                    E: "TP53"
+                },
+                correctAnswer: "B",
+                rationale: "For aldosterone-producing adenomas, ion channel mutations (specifically the KCNJ5 sodium channel mutation) are the most frequent overall driver mutations, present in 90+% of cases. (PRKACA is associated with cortisol-producing adenomas, and TP53 with carcinomas).",
+                source: "Adrenal Pathology PDF, slide 41: 'Most Frequent Driver Mutations Associated with Adrenal Cortical Neoplasms | Aldosterone-Producing Adenomas | Ion channel mutations (KCNJ5 [sodium channel] mutation most frequent overall) | 90+%'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO2: Compare and contrast adrenal cortical adenoma and carcinoma regarding pathologic features, hormonal activity, driver mutations, and prognosis.",
+                question: "A 55-year-old man undergoes resection of a 12-cm, 450-gram adrenal mass. Histological evaluation of the tumor reveals marked nuclear pleomorphism, necrosis, atypical mitoses, and vascular invasion. Based on these features, the diagnosis is adrenal cortical carcinoma. What is the expected five-year survival rate for this adult patient?",
+                options: {
+                    A: "Less than 5%",
+                    B: "15-60%",
+                    C: "75-85%",
+                    D: "90-95%",
+                    E: "Greater than 99%"
+                },
+                correctAnswer: "B",
+                rationale: "Adrenal cortical carcinomas are generally large, aggressive tumors with necrosis, atypia, and invasion. The five-year survival rate in adults is poor and highly dependent on stage, ranging from 15-60%.",
+                source: "Adrenal Pathology PDF, slide 36: 'Adrenal Cortical Carcinoma • Five-year survival 50+% in children 15-60% in adults (very dependent on stage)'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO2: Compare and contrast adrenal cortical adenoma and carcinoma regarding pathologic features, hormonal activity, driver mutations, and prognosis.",
+                question: "A 45-year-old woman has an incidental 3-cm mass discovered on her right adrenal gland. The mass is excised, and the pathologist describes it as a well-circumscribed, encapsulated, yellow-to-tan lesion weighing 15 grams. Microscopically, the neoplastic cells appear uniform with minimal atypia and rare mitoses. Which of the following is the most likely diagnosis?",
+                options: {
+                    A: "Adrenal cortical adenoma",
+                    B: "Adrenal cortical carcinoma",
+                    C: "Myelolipoma",
+                    D: "Neuroblastoma",
+                    E: "Pheochromocytoma"
+                },
+                correctAnswer: "A",
+                rationale: "Adrenal cortical adenomas are benign tumors typically ≤ 5 cm, well-circumscribed or encapsulated, weighing between 0.2 and 2 g (though size varies, they are small compared to carcinomas). Histologically, the cells are uniform, resemble normal cortical cells, have minimal atypia, and mitoses are rare.",
+                source: "Adrenal Pathology PDF, slides 34-35: 'Adrenal Cortical Adenoma • Well-circumscribed or encapsulated • Color ranges from yellow to tan to orangish to dark brown' and 'Histopathology - • Neoplastic cells generally resemble normal cortical cells • Typically uniform with minimal atypia • Mitoses rare'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO3: Describe pheochromocytoma regarding cell of origin, secretory activity, basic clinical features, morphology, sporadic vs. familial types, and determining whether benign or malignant.",
+                question: "A 48-year-old man presents with episodic severe headaches, diaphoresis, and paroxysmal hypertension. A 24-hour urine test reveals highly elevated levels of vanillylmandelic acid (VMA) and metanephrines. An abdominal MRI identifies a mass in the adrenal gland. The neoplastic cells comprising this tumor originate from which of the following structures?",
+                options: {
+                    A: "Adrenal cortex (zona fasciculata)",
+                    B: "Adrenal cortex (zona glomerulosa)",
+                    C: "Adrenal cortex (zona reticularis)",
+                    D: "Adrenal medulla (chromaffin cells)",
+                    E: "Parasympathetic ganglia"
+                },
+                correctAnswer: "D",
+                rationale: "The patient has a pheochromocytoma, which is an intra-adrenal paraganglioma that arises from the chromaffin cells of the adrenal medulla and secretes catecholamines (resulting in elevated urine VMA and metanephrines).",
+                source: "Adrenal Pathology PDF, slide 42, 47: 'Pheochromocytoma • Arises from chromaffin cells of adrenal medulla • Type of paraganglioma (intra-adrenal paraganglioma)'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO3: Describe pheochromocytoma regarding cell of origin, secretory activity, basic clinical features, morphology, sporadic vs. familial types, and determining whether benign or malignant.",
+                question: "A 50-year-old woman undergoes resection of a 100-gram pheochromocytoma. The pathologist evaluates the tumor histologically to determine its malignant potential. According to current medical consensus, which of the following is the only absolute criterion for defining a pheochromocytoma as malignant?",
+                options: {
+                    A: "Cellular monotony",
+                    B: "High cell density",
+                    C: "Invasion into the tumor capsule",
+                    D: "Metastasis at a site where paraganglia are not otherwise found",
+                    E: "Presence of extreme pleomorphism"
+                },
+                correctAnswer: "D",
+                rationale: "While features like invasion, pleomorphism, and high mitotic activity stratify the risk of the tumor, the current thinking is that all pheochromocytomas have some malignant potential. The only absolute criterion for malignancy is documented metastasis to a site where paraganglionic tissue is not normally found (e.g., lungs, liver, bone).",
+                source: "Adrenal Pathology PDF, slide 48: 'Pheochromocytoma Malignant vs. Benign ? Current Thinking: All Have Some Malignant Potential Absolute Malignant Criterion • Metastasis (at site where paraganglia not otherwise found)'"
+            },
+            {
+                section: "Adrenal Pathology",
+                fullLO: "LO3: Describe pheochromocytoma regarding cell of origin, secretory activity, basic clinical features, morphology, sporadic vs. familial types, and determining whether benign or malignant.",
+                question: "A 30-year-old man is diagnosed with bilateral pheochromocytomas. Given his young age and bilateral presentation, the physician suspects a familial syndrome. Genetic testing is ordered to evaluate for germline mutations. Which of the following lists of genes represents the most common mutations associated with familial pheochromocytoma?",
+                options: {
+                    A: "AIRE, FOXP3, FAS",
+                    B: "BRCA1, BRCA2, PALB2",
+                    C: "PRKACA, CTNNB1, KCNJ5",
+                    D: "RET, VHL, NF1, SDHB",
+                    E: "TP53, RB1, APC"
+                },
+                correctAnswer: "D",
+                rationale: "Familial pheochromocytomas are associated with specific germline mutations, including RET (MEN 2A & 2B), VHL (von Hippel-Lindau disease), NF1 (neurofibromatosis type 1), and subunits of succinate dehydrogenase (SDHB, SDHC, SDHD).",
+                source: "Adrenal Pathology PDF, slide 43: 'Familial Pheochromocytoma Germline Mutations • RET (MEN 2A & 2B) • VHL (von Hippel-Lindau disease) • NF1 (neurofibromatosis, type 1) • SDHB • SDHC (succinate dehydrogenase subunits) • SDHD'"
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    // Format navigation button text
+                    if (btnText.includes("Parathyroid Pathology")) btnText = "Parathyroid Path";
+                    if (btnText.includes("Adrenal Disorders")) btnText = "Adrenal Disorders & MEN";
+                    if (btnText.includes("Adrenal Pathology")) btnText = "Adrenal Path";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
